@@ -46,9 +46,11 @@ public class MainActivity extends AppCompatActivity {
                         if(task.isSuccessful()) {
                             for(QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, document.getId() + "=>" + document.getData());
+                                List<String> websites = (List<String>) document.get("websites");
                                 User thisUser = new User(document.getData().getOrDefault("users",null),
                                         document.getData().getOrDefault("users",null),
-                                        document.getData().getOrDefault("website",null));
+                                        websites);
+                                Log.d(TAG, thisUser + "=>" + document.getData());
                                 usersDB.add(thisUser);
                             }
                         }
