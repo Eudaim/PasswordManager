@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AccountListFragment extends Fragment {
+    FirebaseDataFragment fdf;
     List<String> companies; //a list of companies that the user has an account with
     ArrayAdapter<String> adapter;
     private static AccountListFragment instance;
@@ -24,10 +25,12 @@ public class AccountListFragment extends Fragment {
         View v = inflater.inflate(R.layout.accountlistfragment, container, false);
         ListView bookmarks = (ListView) v.findViewById(R.id.accounts);
 
+        //make fragment object to use from this class
+        //fdf = (TextView) fragmentManager.findFragmentById(R.id.)
         companies = new ArrayList<>();
-        companies.add("Hulu");
-        companies.add("Google");
-        companies.add("Crunchyroll");
+        companies.add("Hulu.com");
+        companies.add("Google.com");
+        companies.add("Crunchyroll.com");
         adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, companies);
         bookmarks.setAdapter(adapter);
 
@@ -38,6 +41,8 @@ public class AccountListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //if statements telling code to display information based on the positioned item clicked
+                String s = (String) parent.getItemAtPosition(position);
+
             }
         });
         return v;
