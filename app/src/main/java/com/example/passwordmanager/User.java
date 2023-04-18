@@ -25,6 +25,7 @@ public class User {
     public String getPassword() {
         return password.toString();
     }
+
     public List<String> getWebsiteList() {
         List<String> websiteList = new ArrayList<>();
         for(int i = 0; i < websiteList.size();) {
@@ -33,4 +34,14 @@ public class User {
         }
         return websiteList;
     }
-}
+
+    public List<String> getUserNameAndPassword(Website website) {
+        int index = websites.indexOf(website);
+        List<String> usernamePassword = new ArrayList<>();
+        if(websites.contains(website)) {
+            websites.get(index);
+            usernamePassword.add(websites.get(index+1).toString());
+            usernamePassword.add(websites.get(index+2).toString());
+        }
+        return usernamePassword;
+    }}
