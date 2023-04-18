@@ -22,4 +22,9 @@ public class FirebaseDataFragment extends Fragment {
     }
 
     public static FirebaseDataFragment getInstance() {return instance;}
+
+    public TextView getInfo()
+    {
+        return info;
+    }
 }

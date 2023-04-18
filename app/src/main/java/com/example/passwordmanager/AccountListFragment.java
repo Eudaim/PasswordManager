@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -24,10 +25,14 @@ public class AccountListFragment extends Fragment {
         instance = this;
         View v = inflater.inflate(R.layout.accountlistfragment, container, false);
         ListView bookmarks = (ListView) v.findViewById(R.id.accounts);
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 
         //make fragment object to use from this class
-        //fdf = (TextView) fragmentManager.findFragmentById(R.id.)
+        fdf = (FirebaseDataFragment) fragmentManager.findFragmentById(R.id.firebasedatafragment);
+
         companies = new ArrayList<>();
+        //go into database and add the company names to companies list
+
         companies.add("Hulu.com");
         companies.add("Google.com");
         companies.add("Crunchyroll.com");
@@ -40,9 +45,9 @@ public class AccountListFragment extends Fragment {
         {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //if statements telling code to display information based on the positioned item clicked
-                String s = (String) parent.getItemAtPosition(position);
-
+                String s = (String) parent.getItemAtPosition(position);     //s is the company name
+                //need to find username and password from firebase based on s
+                //fdf.getInfo().setText("Username: " + <username string> + "\nPassword: " + <password string>);
             }
         });
         return v;

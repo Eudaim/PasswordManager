@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.EntityIterator;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.mtp.MtpObjectInfo;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,12 +34,15 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     List<User> usersDB = new ArrayList<>();
 
     Button createAccountButton;
     Button signInButton;
+
+    private LowBatteryReceiver lowBatteryReceiver;
     EditText usernameEditText;
     EditText passwordEditText;
     EditText confirmPasswordEditText;
@@ -46,8 +50,16 @@ public class MainActivity extends AppCompatActivity {
     User thisUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Create the intent for the low battery broadcast receiver
+        lowBatteryReceiver = new LowBatteryReceiver();
+        IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_LOW);
+        registerReceiver(lowBatteryReceiver, filter);
+
+
         createAccountButton = findViewById(R.id.createAccountButton);
         usernameEditText = findViewById(R.id.username);
         passwordEditText = findViewById(R.id.password);
@@ -75,6 +87,13 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    @Override
+    //Unregister the battery receiver to prevent memory problems
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(lowBatteryReceiver);
     }
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
