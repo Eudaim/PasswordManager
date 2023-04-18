@@ -24,10 +24,9 @@ import java.util.List;
 
 public class SigninActivity extends AppCompatActivity {
     Button signInButton;
-    TextView userNameTextView;
+    TextView usernameTextView;
     TextView passwordTextView;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-
     List<User> usersDB = new ArrayList<>();
 
     @Override
@@ -36,6 +35,8 @@ public class SigninActivity extends AppCompatActivity {
         setContentView(R.layout.sign_in);
         signInButton = (Button) findViewById(R.id.signInButtonSignIn);
         signInButton.setOnClickListener(onClickListener);
+        usernameTextView = findViewById(R.id.usernameSignIn);
+        passwordTextView = findViewById(R.id.passwordSignIn);
         db.collection("users").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -44,8 +45,8 @@ public class SigninActivity extends AppCompatActivity {
                             for(QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, document.getId() + "=>" + document.getData());
                                 List<String> websites = (List<String>) document.get("websites");
-                                User thisUser = new User(document.getData().getOrDefault("users",null),
-                                        document.getData().getOrDefault("users",null),
+                                User thisUser = new User(document.getData().getOrDefault("username",null).toString(),
+                                        document.getData().getOrDefault("password",null).toString(),
                                         websites);
                                 Log.d(TAG, thisUser + "=>" + document.getData());
                                 usersDB.add(thisUser);
@@ -62,15 +63,20 @@ public class SigninActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             switch(view.getId()) {
-                case R.id.signInButton:
-                    String username = (String) userNameTextView.getText();
-                    String password = (String) passwordTextView.getText();
-                    for(User u : usersDB) {
-                        if(u.getPassword() == username && u.getUsername() == password) {
-                            Intent signInIntent = new Intent(SigninActivity.this,AccountInfoActivity.class);
-                            SigninActivity.this.startActivity(signInIntent);
+                case R.id.signInButtonSignIn:
+                    String username = usernameTextView.getText().toString();
+                    String password = (String) passwordTextView.getText().toString();
+                    for(User user : usersDB) {
+                        if(user.getPassword().equals(password) && user.getUsername().equals(username)) {
+                            Intent startFragmentIntent = new Intent(SigninActivity.this,AccountInfoActivity.class);
+                            startFragmentIntent.putExtra("user", user );
+                            SigninActivity.this.startActivity(startFragmentIntent);
+                            break;
                         }
                     }
+                case R.id.signInButton:
+                    Intent signInIntent = new Intent(SigninActivity.this,AccountInfoActivity.class);
+                    SigninActivity.this.startActivity(signInIntent);
                     break;
             }
         }
