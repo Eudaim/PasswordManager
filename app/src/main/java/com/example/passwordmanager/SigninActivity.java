@@ -74,10 +74,6 @@ public class SigninActivity extends AppCompatActivity {
                             break;
                         }
                     }
-                case R.id.signInButton:
-                    Intent signInIntent = new Intent(SigninActivity.this,AccountInfoActivity.class);
-                    SigninActivity.this.startActivity(signInIntent);
-                    break;
             }
         }
 

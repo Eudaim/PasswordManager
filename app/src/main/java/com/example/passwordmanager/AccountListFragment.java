@@ -1,5 +1,6 @@
 package com.example.passwordmanager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AccountListFragment extends Fragment {
+    User u;
     FirebaseDataFragment fdf;
     List<String> companies; //a list of companies that the user has an account with
     ArrayAdapter<String> adapter;
@@ -24,6 +26,7 @@ public class AccountListFragment extends Fragment {
     {
         instance = this;
         View v = inflater.inflate(R.layout.accountlistfragment, container, false);
+        u = (User) getArguments().getParcelable("user");
         ListView bookmarks = (ListView) v.findViewById(R.id.accounts);
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 
@@ -33,9 +36,11 @@ public class AccountListFragment extends Fragment {
         companies = new ArrayList<>();
         //go into database and add the company names to companies list
 
-        companies.add("Hulu.com");
-        companies.add("Google.com");
-        companies.add("Crunchyroll.com");
+        List<String> listt = u.getWebsiteList();
+        for(int i = 0; i < listt.size(); i++)
+        {
+            companies.add(listt.get(i));
+        }
         adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, companies);
         bookmarks.setAdapter(adapter);
 
@@ -47,7 +52,8 @@ public class AccountListFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String s = (String) parent.getItemAtPosition(position);     //s is the company name
                 //need to find username and password from firebase based on s
-                //fdf.getInfo().setText("Username: " + <username string> + "\nPassword: " + <password string>);
+                List<String> accountinfo = u.getUserNameAndPassword(s);
+                fdf.getInfo().setText("Username: " + accountinfo.get(0) + "\nPassword: " + accountinfo.get(1));
             }
         });
         return v;

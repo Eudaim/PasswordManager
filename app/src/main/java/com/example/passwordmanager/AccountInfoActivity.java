@@ -1,5 +1,6 @@
 package com.example.passwordmanager;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,13 +13,18 @@ public class AccountInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        User u = intent.getParcelableExtra("user");
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("user", u);
         AccountListFragment fragment1 = new AccountListFragment();
+        fragment1.setArguments(bundle);
         FirebaseDataFragment fragment2 = new FirebaseDataFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.accountlistfragment, fragment1);
         fragmentTransaction.add(R.id.firebasedatafragment, fragment2);
-
         setContentView(R.layout.accountinfoactivity);
+        fragmentTransaction.commit();
     }
 }
