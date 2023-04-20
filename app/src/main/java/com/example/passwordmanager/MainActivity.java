@@ -4,6 +4,9 @@ import static android.content.ContentValues.TAG;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -29,6 +32,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
 
+    private static final int NOTIFICATION_REMINDER_NIGHT = 1;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     List<User> usersDB = new ArrayList<>();
@@ -52,6 +56,15 @@ public class MainActivity extends AppCompatActivity {
         lowBatteryReceiver = new LowBatteryReceiver();
         IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_LOW);
         registerReceiver(lowBatteryReceiver, filter);
+
+        //create intent for notifications
+        Intent notificationIntent = new Intent(getApplicationContext(), NotificationService.class);
+        PendingIntent contentIntent = PendingIntent.getService(getApplicationContext(), 0, notificationIntent,
+                PendingIntent.FLAG_IMMUTABLE);
+        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        //am.cancel(contentIntent);
+        am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
+                + 360, 360, contentIntent);
 
 
         createAccountButton = findViewById(R.id.createAccountButton);
