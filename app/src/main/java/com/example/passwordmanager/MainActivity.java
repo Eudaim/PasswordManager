@@ -4,16 +4,13 @@ import static android.content.ContentValues.TAG;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.EntityIterator;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.mtp.MtpObjectInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -25,12 +22,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -109,8 +103,17 @@ public class MainActivity extends AppCompatActivity {
                        String password = passwordEditText.getText().toString();
                        String confirmPassword = confirmPasswordEditText.getText().toString();
                        if(!confirmPassword.equals(password)) {
-                           //code error toast
+                           Toast.makeText(getApplicationContext(),
+                                   "Passwords Don't match!",
+                                   Toast.LENGTH_LONG).show();
                            break;
+                       }
+                       for(User u: usersDB) {
+                           if(u.getUsername().equals(username)) {
+                               Toast.makeText(getApplicationContext(),
+                                       "username already taken!",
+                                       Toast.LENGTH_LONG).show();
+                           }
                        }
                     List<String> websites = new ArrayList<String>();
                     User user = new User(username, password, websites);
@@ -130,6 +133,9 @@ public class MainActivity extends AppCompatActivity {
                                     Log.w(TAG, "Error writing document", e);
                                 }
                             });
+                    signInIntent = new Intent(MainActivity.this,AccountInfoActivity.class);
+                    signInIntent.putExtra("user", user );
+                    MainActivity.this.startActivity(signInIntent);
                     break;
             }
         }

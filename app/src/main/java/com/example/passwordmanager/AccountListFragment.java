@@ -10,32 +10,36 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class AccountListFragment extends Fragment {
-    User u;
+    private User u;
     FirebaseDataFragment fdf;
     List<String> companies; //a list of companies that the user has an account with
     ArrayAdapter<String> adapter;
     private static AccountListFragment instance;
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state)
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
         instance = this;
         View v = inflater.inflate(R.layout.accountlistfragment, container, false);
-        u = (User) getArguments().getParcelable("user");
         ListView bookmarks = (ListView) v.findViewById(R.id.accounts);
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 
         //make fragment object to use from this class
-        fdf = (FirebaseDataFragment) fragmentManager.findFragmentById(R.id.firebasedatafragment);
+        //fdf = (FirebaseDataFragment) fragmentManager.findFragmentById(R.id.firebasedatafragment);
 
         companies = new ArrayList<>();
         //go into database and add the company names to companies list
-
+        Bundle args = getArguments();
+        u = args.getParcelable("user");
         List<String> listt = u.getWebsiteList();
         for(int i = 0; i < listt.size(); i++)
         {
@@ -53,13 +57,23 @@ public class AccountListFragment extends Fragment {
                 String s = (String) parent.getItemAtPosition(position);     //s is the company name
                 //need to find username and password from firebase based on s
                 List<String> accountinfo = u.getUserNameAndPassword(s);
-                fdf.getInfo().setText("Username: " + accountinfo.get(0) + "\nPassword: " + accountinfo.get(1));
+                FirebaseDataFragment firebaseDataFragment = FirebaseDataFragment.newInstance(accountinfo);
+                FragmentTransaction trans = getParentFragmentManager().beginTransaction();
+                trans.replace(R.id.firebasedatafragment, firebaseDataFragment, "AccountList");
+                trans.commit();
+                //fdf.getInfo().setText("Username: " + accountinfo.get(0) + "\nPassword: " + accountinfo.get(1));
             }
         });
         return v;
     }
 
-    public static AccountListFragment getInstance() {return instance;}
+    public static AccountListFragment newInstance(User user) {
+        AccountListFragment fragment = new AccountListFragment();
+        Bundle args = new Bundle();
+        args.putParcelable("user", user);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     public void addCompany(String s)
     {

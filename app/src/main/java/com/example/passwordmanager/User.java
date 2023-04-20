@@ -52,7 +52,7 @@ public class User implements Parcelable {
 
     public List<String> getWebsiteList() {
         List<String> websiteList = new ArrayList<>();
-        for(int i = 0; i < websiteList.size();) {
+        for(int i = 0; i < websites.size();) {
             websiteList.add(websites.get(i));
             i+=3;
         }

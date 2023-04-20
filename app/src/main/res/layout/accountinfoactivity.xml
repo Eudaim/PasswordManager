@@ -13,26 +13,33 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="583dp"
+            android:orientation="vertical">
 
-            <androidx.fragment.app.FragmentContainerView
+            <FrameLayout
                 android:id="@+id/accountlistfragment"
                 android:name="com.example.passwordmanager.AccountListFragment"
-                android:layout_width="75dp"
-                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_height="935dp"
                 android:layout_weight="1"
                 tools:layout="@layout/accountlistfragment" />
 
-            <androidx.fragment.app.FragmentContainerView
+            <FrameLayout
                 android:id="@+id/firebasedatafragment"
                 android:name="com.example.passwordmanager.FirebaseDataFragment"
-                android:layout_width="330dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 tools:layout="@layout/firebasedatafragment" />
 
         </LinearLayout>
+
+        <Button
+            android:id="@+id/addwebsite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add a Website" />
+
     </LinearLayout>
 
 </LinearLayout>

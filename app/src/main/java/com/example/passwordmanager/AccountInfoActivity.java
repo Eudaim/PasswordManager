@@ -1,30 +1,49 @@
 package com.example.passwordmanager;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 public class AccountInfoActivity extends AppCompatActivity {
 
+    Button addWebsiteButton;
+    User extra;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        Intent intent = getIntent();
-        User u = intent.getParcelableExtra("user");
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("user", u);
-        AccountListFragment fragment1 = new AccountListFragment();
-        fragment1.setArguments(bundle);
-        FirebaseDataFragment fragment2 = new FirebaseDataFragment();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.accountlistfragment, fragment1);
-        fragmentTransaction.add(R.id.firebasedatafragment, fragment2);
         setContentView(R.layout.accountinfoactivity);
-        fragmentTransaction.commit();
+        addWebsiteButton = findViewById(R.id.addwebsite);
+        addWebsiteButton.setOnClickListener(onClickListener);
+        extra = getIntent().getParcelableExtra("user");
+        AccountListFragment accountListFragment = AccountListFragment.newInstance(extra);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction trans = manager.beginTransaction();
+        trans.replace(R.id.accountlistfragment, accountListFragment, "AccountList");
+        trans.commit();
     }
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()) {
+                case R.id.addwebsite:
+                    Intent addWebsiteIntent = new Intent(AccountInfoActivity.this,addWebsiteActivity.class);
+                    addWebsiteIntent.putExtra("user", extra );
+                    AccountInfoActivity.this.startActivity(addWebsiteIntent);
+                break;
+            }
+
+        }
+    };
 }
