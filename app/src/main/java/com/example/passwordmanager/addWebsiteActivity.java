@@ -39,26 +39,33 @@ public class addWebsiteActivity extends AppCompatActivity {
     List<String> websites = new ArrayList<>();
     CollectionReference usersRef = db.collection("users");
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.addwebsiteactivity);
+
+        // Initialize UI elements
         cancelButton = findViewById(R.id.cancel);
         addWebsiteButton = findViewById(R.id.addwebsite);
         websiteNameEditText = findViewById(R.id.websitename);
         passwordEditText = findViewById(R.id.password);
         usernameEditText = findViewById(R.id.username);
+
+        // Set click listeners for buttons
         addWebsiteButton.setOnClickListener(onClickListener);
         cancelButton.setOnClickListener(onClickListener);
+
+        // Get user object from intent extras
         extra = getIntent().getParcelableExtra("user");
+
+        // Query Firestore for document with user's username
         Query query = usersRef.whereEqualTo("username",extra.getUsername());
         db.collection("users").whereEqualTo("username",extra.getUsername()).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            // Iterate through result documents and get the ID of the matching document
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
                                 documentId = document.getId();
                             }
                         } else {
@@ -67,12 +74,15 @@ public class addWebsiteActivity extends AppCompatActivity {
                     }
                 });
     }
+
     private View.OnClickListener onClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View view) {
             switch (view.getId()) {
+                // if add website button is clicked
                 case R.id.addwebsite:
+                    // add new website information to lists
                     for(String s : extra.websites) {
                         websites.add(s);
                     }
@@ -82,19 +92,23 @@ public class addWebsiteActivity extends AppCompatActivity {
                     extra.websites.add(websiteNameEditText.getText().toString());
                     extra.websites.add(usernameEditText.getText().toString());
                     extra.websites.add(passwordEditText.getText().toString());
+                    // update user document in the database with new website information
                     db.collection("users").document(documentId)
                             .update("websites", websites);
+                    // navigate back to AccountInfoActivity
                     Intent startFragmentIntent = new Intent(addWebsiteActivity.this,AccountInfoActivity.class);
                     startFragmentIntent.putExtra("user", extra );
                     addWebsiteActivity.this.startActivity(startFragmentIntent);
                     break;
+                // if cancel button is clicked
                 case R.id.cancel:
+                    // navigate back to AccountInfoActivity without updating database
                     startFragmentIntent = new Intent(addWebsiteActivity.this,AccountInfoActivity.class);
                     startFragmentIntent.putExtra("user", extra );
                     addWebsiteActivity.this.startActivity(startFragmentIntent);
                     break;
             }
-
         }
     };
 }
+

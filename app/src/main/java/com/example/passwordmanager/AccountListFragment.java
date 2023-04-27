@@ -20,53 +20,49 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AccountListFragment extends Fragment {
-    private User u;
-    FirebaseDataFragment fdf;
-    List<String> companies; //a list of companies that the user has an account with
-    ArrayAdapter<String> adapter;
+
+    private User u; // stores the current user
+    FirebaseDataFragment fdf; // fragment to display account info
+    List<String> companies; // list of websites
+    ArrayAdapter<String> adapter; // adapter for the ListView
     private static AccountListFragment instance;
+
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
-    {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         instance = this;
         View v = inflater.inflate(R.layout.accountlistfragment, container, false);
         ListView bookmarks = (ListView) v.findViewById(R.id.accounts);
-        //FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 
-        //make fragment object to use from this class
-        //fdf = (FirebaseDataFragment) fragmentManager.findFragmentById(R.id.firebasedatafragment);
-
+        // get the current user and add their websites to the list
         companies = new ArrayList<>();
-        //go into database and add the company names to companies list
         Bundle args = getArguments();
         u = args.getParcelable("user");
         List<String> listt = u.getWebsiteList();
-        for(int i = 0; i < listt.size(); i++)
-        {
+        for(int i = 0; i < listt.size(); i++) {
             companies.add(listt.get(i));
         }
+
+        // set up the adapter and ListView
         adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, companies);
         bookmarks.setAdapter(adapter);
 
-        //Set adapter for the ListView
-        bookmarks.setAdapter(adapter);
-        bookmarks.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
+        // when an item is clicked, display its account info in a new fragment
+        bookmarks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String s = (String) parent.getItemAtPosition(position);     //s is the company name
-                //need to find username and password from firebase based on s
+                String s = (String) parent.getItemAtPosition(position);
                 List<String> accountinfo = u.getUserNameAndPassword(s);
                 FirebaseDataFragment firebaseDataFragment = FirebaseDataFragment.newInstance(accountinfo);
                 FragmentTransaction trans = getParentFragmentManager().beginTransaction();
                 trans.replace(R.id.firebasedatafragment, firebaseDataFragment, "AccountList");
                 trans.commit();
-                //fdf.getInfo().setText("Username: " + accountinfo.get(0) + "\nPassword: " + accountinfo.get(1));
             }
         });
+
         return v;
     }
 
+    // create a new instance of the fragment with the given user
     public static AccountListFragment newInstance(User user) {
         AccountListFragment fragment = new AccountListFragment();
         Bundle args = new Bundle();
@@ -75,8 +71,8 @@ public class AccountListFragment extends Fragment {
         return fragment;
     }
 
-    public void addCompany(String s)
-    {
+    // adds a new website to the list and updates the adapter
+    public void addCompany(String s) {
         adapter.add(s);
         adapter.notifyDataSetChanged();
     }

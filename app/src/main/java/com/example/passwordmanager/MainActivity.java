@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         PendingIntent contentIntent = PendingIntent.getService(getApplicationContext(), 0, notificationIntent,
                 PendingIntent.FLAG_IMMUTABLE);
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        //am.cancel(contentIntent);
         am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
                 + 360, 360, contentIntent);
 
@@ -107,34 +106,44 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             switch(view.getId()) {
+                // When the "Sign In" button is clicked
                 case R.id.signInButton:
+                    // Create an intent to navigate to the sign in activity
                     Intent signInIntent = new Intent(MainActivity.this,SigninActivity.class);
+                    // Start the sign in activity
                     MainActivity.this.startActivity(signInIntent);
                     break;
+                // When the "Create Account" button is clicked
                 case R.id.createAccountButton:
-                       String username = usernameEditText.getText().toString();
-                       String password = passwordEditText.getText().toString();
-                       String confirmPassword = confirmPasswordEditText.getText().toString();
-                       if(!confirmPassword.equals(password)) {
-                           Toast.makeText(getApplicationContext(),
-                                   "Passwords Don't match!",
-                                   Toast.LENGTH_LONG).show();
-                           break;
-                       }
-                       for(User u: usersDB) {
-                           if(u.getUsername().equals(username)) {
-                               Toast.makeText(getApplicationContext(),
-                                       "username already taken!",
-                                       Toast.LENGTH_LONG).show();
-                           }
-                       }
+                    // Get the entered username, password, and confirmed password
+                    String username = usernameEditText.getText().toString();
+                    String password = passwordEditText.getText().toString();
+                    String confirmPassword = confirmPasswordEditText.getText().toString();
+                    // If the passwords don't match, show an error message and stop execution
+                    if(!confirmPassword.equals(password)) {
+                        Toast.makeText(getApplicationContext(),
+                                "Passwords Don't match!",
+                                Toast.LENGTH_LONG).show();
+                        break;
+                    }
+                    // Check if the entered username already exists in the database, and show an error message if so
+                    for(User u: usersDB) {
+                        if(u.getUsername().equals(username)) {
+                            Toast.makeText(getApplicationContext(),
+                                    "username already taken!",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                    // Create a new User object with the entered username, password, and an empty list of websites
                     List<String> websites = new ArrayList<String>();
                     User user = new User(username, password, websites);
+                    // Add the new user to the database
                     db.collection("users").document().set(user)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
                                     Log.d(TAG, "DocumentSnapshot successfully written!");
+                                    // Show a success message
                                     Toast.makeText(getApplicationContext(),
                                             "User Created. Welcome!",
                                             Toast.LENGTH_LONG).show();
@@ -146,12 +155,15 @@ public class MainActivity extends AppCompatActivity {
                                     Log.w(TAG, "Error writing document", e);
                                 }
                             });
+                    // Create an intent to navigate to the account info activity and include the new user as an extra
                     signInIntent = new Intent(MainActivity.this,AccountInfoActivity.class);
                     signInIntent.putExtra("user", user );
+                    // Start the account info activity
                     MainActivity.this.startActivity(signInIntent);
                     break;
             }
         }
 
     };
+
 }
