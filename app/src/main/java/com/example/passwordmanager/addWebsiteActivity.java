@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -83,6 +84,12 @@ public class addWebsiteActivity extends AppCompatActivity {
                 // if add website button is clicked
                 case R.id.addwebsite:
                     // add new website information to lists
+                    if(websiteNameEditText.getText().toString().equals("")){
+                        Toast.makeText(getApplicationContext(),
+                                "Enter a valid website",
+                                Toast.LENGTH_LONG).show();
+                        break;
+                    }
                     for(String s : extra.websites) {
                         websites.add(s);
                     }
