@@ -119,6 +119,13 @@ public class MainActivity extends AppCompatActivity {
                     String username = usernameEditText.getText().toString();
                     String password = passwordEditText.getText().toString();
                     String confirmPassword = confirmPasswordEditText.getText().toString();
+
+                    if(username.equals("") || password.equals("") ){
+                        Toast.makeText(getApplicationContext(),
+                                "Enter a valid account",
+                                Toast.LENGTH_LONG).show();
+                        break;
+                    }
                     // If the passwords don't match, show an error message and stop execution
                     if(!confirmPassword.equals(password)) {
                         Toast.makeText(getApplicationContext(),
@@ -128,10 +135,11 @@ public class MainActivity extends AppCompatActivity {
                     }
                     // Check if the entered username already exists in the database, and show an error message if so
                     for(User u: usersDB) {
-                        if(u.getUsername().equals(username)) {
+                        if(u.getUsername().equalsIgnoreCase(username)) {
                             Toast.makeText(getApplicationContext(),
-                                    "username already taken!",
+                                    "Username already taken!",
                                     Toast.LENGTH_LONG).show();
+                            return;
                         }
                     }
                     // Create a new User object with the entered username, password, and an empty list of websites

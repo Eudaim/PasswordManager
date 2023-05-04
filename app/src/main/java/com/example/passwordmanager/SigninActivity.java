@@ -25,6 +25,7 @@ import java.util.List;
 
 public class SigninActivity extends AppCompatActivity {
     Button signInButton;
+    Button createAccountButton;
     TextView usernameTextView;
     TextView passwordTextView;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -38,6 +39,9 @@ public class SigninActivity extends AppCompatActivity {
         // Initialize sign in button and set an OnClickListener
         signInButton = (Button) findViewById(R.id.signInButtonSignIn);
         signInButton.setOnClickListener(onClickListener);
+
+        createAccountButton = findViewById(R.id.createAccountButtonSignIn);
+        createAccountButton.setOnClickListener(onClickListener);
 
         // Initialize username and password TextViews
         usernameTextView = findViewById(R.id.usernameSignIn);
@@ -82,8 +86,16 @@ public class SigninActivity extends AppCompatActivity {
             switch(view.getId()) {
                 case R.id.signInButtonSignIn:
                     // Get the username and password entered by the user
+                    Integer tester = 0;
                     String username = usernameTextView.getText().toString();
                     String password = (String) passwordTextView.getText().toString();
+
+                    if(username.equals("") || password.equals("") ){
+                        Toast.makeText(getApplicationContext(),
+                                "Enter a valid login",
+                                Toast.LENGTH_LONG).show();
+                        break;
+                    }
 
                     // Loop through all the users in the database and check if the entered credentials match with any user
                     for(User user : usersDB) {
@@ -92,14 +104,26 @@ public class SigninActivity extends AppCompatActivity {
                             Intent startFragmentIntent = new Intent(SigninActivity.this,AccountInfoActivity.class);
                             startFragmentIntent.putExtra("user", user );
                             SigninActivity.this.startActivity(startFragmentIntent);
+                            tester =1;
                             break;
                         }
-                        else {
-                            Toast.makeText(getApplicationContext(),
-                                    "Incorrect Username or Password. Please Try Again.",
-                                    Toast.LENGTH_LONG).show();
-                        }
+
+                       // else {
+                            //Toast.makeText(getApplicationContext(),
+                                   // "Incorrect Username or Password. Please Try Again.",
+                                    //Toast.LENGTH_LONG).show();
+                        //}
+
                     }
+
+                    if(tester == 0) {
+                        Toast.makeText(getApplicationContext(),
+                                "Incorrect Username or Password. Please Try Again.",
+                                Toast.LENGTH_LONG).show();
+                    }
+                case R.id.createAccountButtonSignIn:
+                    finish();
+                    break;
             }
         }
     };
